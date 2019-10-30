@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+ <meta charset="utf-8">
+ <title>Vue-js | Django | Crud App</title>
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta name="description" content="A simple crud app made with the vue js and django">
+<meta name="keywords" content="vuejs, django, crudapp, restapi">
+ <!-- bootstap -->
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+ <!-- boostrap css -->
+</head>
+<body>
+<!-- bootrtap js files -->
+ <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+ <div id="starting">
+    <div class="container">
+      <div class="row">
+        <h1>List of Articles
+            <button  type="button" class="btn btn-primary" data-toggle="modal" data-target="#addEstudianteModal">Nuevo Estudiante</button>
+        </h1>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Carnet</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Apellido</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="estudiante in estudiantes">
+              <th scope="row">${estudiante.id}</th>
+              <td>${estudiante.carnet}</td>
+              <td>${estudiante.nombre1}</td>
+              <td>${estudiante.apellido1}</td>
+              <td>
+                <button class="btn btn-info" v-on:click="getEstudiante(estudiante.id)">Modificar</button>
+                <button class="btn btn-danger" v-on:click="deleteEstudiante(estudiante.id)">Eliminar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- Add Article Modal -->
+        <div class="modal fade" id="addEstudianteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Nuevo Estudiante</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <form v-on:submit.prevent="addEstudiante()">
+                <div class="modal-body">
+                    <div class="form-group">
+                      <label for="carnet">Carnet</label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="carnet"
+                        min=0
+                        v-model="newEstudiante.carnet"
+                        required="required" >
+                    </div>
+                    <div class="form-group">
+                      <label for="nombre1">Primer Nombre</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="nombre1"
+                        placeholder="Escriba"
+                        v-model="newEstudiante.nombre1"
+                        required="required">
+                    </div>
+                    <div class="form-group">
+                        <label for="nombre2">Segundo Nombre</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="nombre2"
+                          placeholder="Escriba"
+                          v-model="newEstudiante.nombre2"
+                          required="required">
+                    </div>
+                    <div class="form-group">
+                        <label for="nombre3">Tercer Nombre</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="nombre3"
+                          placeholder="Escriba"
+                          v-model="newEstudiante.nombre3"
+                          required="required">
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido1">Primer Apellido</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="apellido1"
+                          placeholder="Escriba"
+                          v-model="newEstudiante.apellido1"
+                          required="required">
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido2">Segundo Apellido</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="apellido2"
+                          placeholder="Escriba"
+                          v-model="newEstudiante.apellido2"
+                          required="required">
+                    </div>
+                    <div class="form-group">
+                        <label for="grado">Grado</label>
+                        <select
+                          class="form-control"
+                          id="grado"
+                          v-model="newEstudiante.grado"
+                          required="required">
+                          <option value=1>Ing. Sis. 2 D</option>
+                          <option value=2>Ing. Sis. 4 D</option>
+                          <option value=3>Ing. Sis. 6 D</option>
+                          <option value=4>Ing. Sis. 8 D</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="actividad">Actividad</label>
+                        <select
+                          class="form-control"
+                          id="actividad"
+                          v-model="newEstudiante.actividad"
+                          required="required">
+                          <option value="Ng">Ninguna</option>
+                          <option value="Vj">Videojuegos</option>
+                          <option value="Rg">Robogallitos</option>
+                          <option value="Pp">Presentacion de Proyectos</option>
+                          <option value="Ex">Exposicion</option>
+                          <option value="St">Staff</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                  <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+                </form>
+              </div>
+            </div>
+           <div class="loading" v-if="loading===true">Loading&#8230;</div>          
+          </div>
+          <!-- End of article modal -->
+          <!-- Edit Article Modal -->
+          <div class="modal fade" id="editEstudianteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">EDIT ARTICLE</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <form v-on:submit.prevent="updateEstudiante()">
+                    <div class="modal-body">
+                        <div class="form-group">
+                          <label for="carnet">Carnet</label>
+                          <input
+                            type="num"
+                            class="form-control"
+                            id="carnet"
+                            min=0
+                            v-model="currentEstudiante.carnet"
+                            required="required" >
+                        </div>
+                        <div class="form-group">
+                          <label for="nombre1">Primer Nombre</label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="nombre1"
+                            placeholder="Escriba"
+                            v-model="currentEstudiante.nombre1"
+                            required="required">
+                        </div>
+                        <div class="form-group">
+                            <label for="nombre2">Segundo Nombre</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="nombre2"
+                              placeholder="Escriba"
+                              v-model="currentEstudiante.nombre2"
+                              required="required">
+                        </div>
+                        <div class="form-group">
+                            <label for="nombre3">Tercer Nombre</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="nombre3"
+                              placeholder="Escriba"
+                              v-model="currentEstudiante.nombre3"
+                              required="required">
+                        </div>
+                        <div class="form-group">
+                            <label for="apellido1">Primer Apellido</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="apellido1"
+                              placeholder="Escriba"
+                              v-model="currentEstudiante.apellido1"
+                              required="required">
+                        </div>
+                        <div class="form-group">
+                            <label for="apellido2">Segundo Apellido</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="apellido2"
+                              placeholder="Escriba"
+                              v-model="currentEstudiante.apellido2"
+                              required="required">
+                        </div>
+                        <div class="form-group">
+                            <label for="grado">Grado</label>
+                            <select
+                              class="form-control"
+                              id="grado"
+                              v-model="currentEstudiante.grado"
+                              required="required">
+                              <option value="1">Ing. Sis. 2 D</option>
+                              <option value="2">Ing. Sis. 4 D</option>
+                              <option value="3">Ing. Sis. 6 D</option>
+                              <option value="4">Ing. Sis. 8 D</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="actividad">Actividad</label>
+                            <select
+                              class="form-control"
+                              id="actividad"
+                              v-model="currentEstudiante.actividad"
+                              required="required">
+                              <option value="Ng">Ninguna</option>
+                              <option value="Vj">Videojuegos</option>
+                              <option value="Rg">Robogallitos</option>
+                              <option value="Pp">Presentacion de Proyectos</option>
+                              <option value="Ex">Exposicion</option>
+                              <option value="St">Staff</option>
+                            </select>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary m-progress" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+                </form>
+              </div>
+            </div>
+            <div class="loading" v-if="loading===true">Loading&#8230;</div>
+          </div>
+          <!-- End of edit article modal -->
+      </div>
+    </div>
+    <div class="loading" v-if="loading===true">Loading&#8230;</div>
+  </div>
+ <!-- vue.js files -->
+ <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.5"></script>
+</body>
+</html>
+
+<script type="text/javascript">
+    new Vue({
+        el: '#starting',
+        delimiters: ['${','}'],
+        data: {
+            estudiantes: [],
+            loading: false,
+            currentEstudiante: {},
+            message: null,
+            newEstudiante: { 'carnet': 0, 'nombre1': null, 'nombre2': null, 'nombre3': ' ', 'apellido1': null, 'apellido2': null, 'grado': 0, 'actividad': null },
+        },
+        mounted: function() {
+            this.getEstudiantes();
+        },
+        methods: {
+            getEstudiantes: function() { 
+                this.loading = true; 
+                this.$http.get('/api/estudiante/') 
+                    .then ((response) => { 
+                    this.estudiantes = response.data; 
+                    this.loading = false; 
+                    }) 
+                    .catch ((err) => { 
+                    this .loading = false; 
+                    console.log (err); 
+                    }) 
+            }, 
+            getEstudiante: function(id) { 
+                this.loading = true; 
+                this.$http.get('/api/estudiante/${id}/') 
+                    .then ((response) => { 
+                    this.currentEstudiante = response.data;
+                    $("#editEstudianteModal").modal('show');
+                    this.loading = false; 
+                    })
+                    .catch ((err) => { 
+                    this.loading = false; 
+                    console.log (err); 
+                    }) 
+            }, 
+            addEstudiante: function() { 
+                this.loading = true; 
+                this.$http.post('/api/estudiante/',this.newEstudiante) 
+                    .then ((response) => { 
+                    this.loading = true; 
+                    this.getEstudiantes(); 
+                    }) 
+                    .catch((err) => { 
+                    this.loading = true; 
+                    console.log(err); 
+                    }) 
+            }, 
+            updateEstudiante: function() { 
+                this.loading = true; 
+                this.$http.put('/api/article/${this.currentEstudiante.id}/', this.currentEstudiante)
+                    .then ((respuesta) => {
+                    this.loading = false; 
+                    this.currentEstudiante = response.data; 
+                    this.getEstudiantes (); 
+                    }) 
+                    .catch ((err) => { 
+                    this.loading = false; 
+                    console.log (err); 
+                    }) 
+            }, 
+            deleteEstudiante: function (id) { 
+                this.loading = true; 
+                this.$http.delete('/api/estudiante/${id}/') 
+                    .then ((response) => { 
+                    this.loading = false; 
+                    this.getEstudiantes (); 
+                    }) 
+                    .catch ((err) => { 
+                    this.loading = false; 
+                    console.log (err); 
+                    })
+            },
+        }
+    })
+</script>
